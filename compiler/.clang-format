@@ -1,0 +1,63 @@
+# .clang-format
+
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: c++20
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+AccessModifierOffset: -4
+NamespaceIndentation: All
+
+# Braces
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterStruct: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterControlStatement: Never
+  BeforeElse: true
+  BeforeCatch: true
+
+# Line length
+ColumnLimit: 100
+
+# Pointers / references
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Regroup
+
+# Function calls / arguments
+AllowAllArgumentsOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false
+
+# Short statements
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+
+# Spacing
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceAfterCStyleCast: true
+
+# Classes
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerIndentWidth: 4
+
+# Switch
+IndentCaseLabels: true
+
+# Comments
+ReflowComments: true

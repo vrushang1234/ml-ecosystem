@@ -1,25 +1,24 @@
+#include "helper.hpp"
+#include "lexer.hpp"
+
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <string>
-
-int main() {
-  std::ifstream file("../test/test.nn");
-  std::string s;
-  while (std::getline(file, s)) {
-    std::stringstream ss(s);
-    std::string word;
-    while (ss >> word) {
-      if (word == "network") {
-        ss >> word;
-        std::cout << "Network: " << word << std::endl;
-      }
+#include <vector>
+int main()
+{
+    std::ifstream file("../test/test.nn");
+    std::string s;
+    std::string code_string;
+    while (std::getline(file, s)) {
+        code_string += s;
     }
-  }
-  if (file.eof())
-    std::cout << "Reached end of file." << std::endl;
-  else
-    std::cerr << "Error: File reading failed!" << std::endl;
-  file.close();
-  return 0;
+    std::vector<Token> tokenList{tokenize(code_string)};
+    printTokens(tokenList);
+    if (file.eof())
+        std::cout << "Reached end of file." << std::endl;
+    else
+        std::cerr << "Error: File reading failed!" << std::endl;
+    file.close();
+    return 0;
 }

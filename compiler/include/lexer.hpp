@@ -3,35 +3,34 @@
 /* Header file for the Lexer for a custom compiler for the ML Inference
  * Ecosystem */
 
+#pragma once
+#include <string>
 #include <vector>
 
-enum ActFunc { ReLU, Sigmoid, Softmax, LeakyReLU };
-
-struct Weights {
-  std::vector<std::vector<double>> weightsVector;
-  long rows, cols;
+enum class TokenType
+{
+    KEYWORD_NETWORK,
+    KEYWORD_INPUT,
+    LEFTBRACE,
+    RIGHTBRACE,
+    KEYWORD_LAYER,
+    KEYWORD_WEIGHTS,
+    KEYWORD_BIASES,
+    KEYWORD_ACTIVATION,
+    LEFTBRACK,
+    RIGHTBRACK,
+    IDENTIFIER,
+    NUMBER,
+    COLON
 };
 
-struct Biases {
-  std::vector<std::vector<double>> biasesVector;
-  long rows, cols;
+struct Token
+{
+    TokenType type;
+    std::string value;
 };
 
-class Layer {
-private:
-  Weights weights;
-  Biases biases;
-  ActFunc actfunc;
-
-public:
-  Layer();
-  void initWeights(long rows, long cols);
-  void initBiases(long rows, long cols);
-  void setActFunc(ActFunc func);
-  ~Layer();
-};
-
-class Network {
-private:
-  std::vector<Layer> layers;
-};
+Token getToken(const std::string& s);
+std::vector<Token> tokenize(const std::string& s);
+bool isNumber(const std::string& str);
+bool isIdentifier(const std::string& str);
