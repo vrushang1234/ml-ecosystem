@@ -1,11 +1,8 @@
-network SimpleMLP{
+network SimpleMLP:
 
     input a[5]
-
-    layer l1{
+    
+    layer l1:
         weights: w1[][]
         bias: b1[]
         activation: relu
-    }
-
-}

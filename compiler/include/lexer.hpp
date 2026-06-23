@@ -30,3 +30,8 @@ public:
   void setActFunc(ActFunc func);
   ~Layer();
 };
+
+class Network {
+private:
+  std::vector<Layer> layers;
+};
