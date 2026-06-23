@@ -29,6 +29,8 @@ std::string tokenTypeToString(TokenType type)
             return "IDENTIFIER";
         case TokenType::NUMBER:
             return "NUMBER";
+        case TokenType::COLON:
+            return "COLON";
         default:
             return "UNKNOWN";
     }
