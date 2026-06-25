@@ -31,6 +31,8 @@ std::string tokenTypeToString(TokenType type)
             return "NUMBER";
         case TokenType::COLON:
             return "COLON";
+        case TokenType::END_OF_FILE:
+            return "END_OF_FILE";
         default:
             return "UNKNOWN";
     }

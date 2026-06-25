@@ -6,5 +6,5 @@ network SimpleMLP{
         weights: w1[][]
         bias: b1[]
         activation: relu
-        }
+    }
 }

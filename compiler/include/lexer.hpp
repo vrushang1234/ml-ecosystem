@@ -1,5 +1,5 @@
 /* Author: Vrushang Anand */
-/* Last Date Modified: Jun 23, 2026 */
+/* Last Date Modified: Jun 25, 2026 */
 /* Header file for the Lexer for a custom compiler for the ML Inference
  * Ecosystem */
 
@@ -21,7 +21,8 @@ enum class TokenType
     RIGHTBRACK,
     IDENTIFIER,
     NUMBER,
-    COLON
+    COLON,
+    END_OF_FILE
 };
 
 struct Token
