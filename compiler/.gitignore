@@ -1,0 +1,16 @@
+# Build artifacts
+build/
+bin/
+
+# Object files
+*.o
+*.obj
+
+# Executables
+*.exe
+*.out
+compiler
+
+# Editor / OS
+*.swp
+.DS_Store
