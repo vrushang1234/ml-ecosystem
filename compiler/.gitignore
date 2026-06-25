@@ -1,6 +1,7 @@
 # Build artifacts
 build/
 bin/
+cmake-build/
 
 # Object files
 *.o
