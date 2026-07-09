@@ -8,7 +8,6 @@ module alu_variable_adder #(parameter N = `DATA_WIDTH) (
     output logic [N-1:0] Sum,
     output logic  overflow
 );
-    logic [N-1:0] operand_B;
     logic [N-1:0] adder_b; //wire used to be either the original B input for addtion,
                            //or negated B for subtraction 
 
