@@ -21,19 +21,33 @@
 
 
 module decode (
-    //instruction defualt is 0000
-    input logic [3:0] instruction,
-    output logic subtract
-);
+    
+    input logic [11:0] instruction,
+    output logic [3:0] opcode,
+    output logic [1:0] engine,
+    output logic [1:0] op1,
+    output logic [1:0] op2,
+    output logic out
+    );
+ 
     always_comb begin
-        subtract = 1'b0;
-        
-        case (instruction)
-            4'b0000: subtract = 1'b0;
-            4'b0001: subtract = 1'b1;
-            default: subtract = 1'b0;
+        opcode = instruction[7:4];
+        //buffer assignment
+        op1 = instruction[3:2];
+        op2 = instruction[1:0];
+         
+        case (opcode)
+        //engine routing
+            4'b0000: engine = 2'b10; //add
+            4'b0001: engine = 2'b10; //sub
+            4'b0010: engine = 2'b10; //MatMul
+            4'b0011: engine = 2'b10; //addT
+            4'b0100: engine = 2'b10; //subT
+            4'b0101: engine = 2'b10; //loadT
+            default: engine = 2'b00; //default
         endcase
     end
- 
-    
+   
+
 endmodule
+
