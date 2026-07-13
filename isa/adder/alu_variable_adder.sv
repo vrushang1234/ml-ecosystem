@@ -8,14 +8,12 @@ module alu_variable_adder #(parameter N = `DATA_WIDTH) (
     output logic [N-1:0] Sum,
     output logic  overflow
 );
-    logic [N-1:0] operand_B;
     logic [N-1:0] adder_b; //wire used to be either the original B input for addtion,
                            //or negated B for subtraction 
-    negation_module #(.N(N)) neg_inst (
-        .B(B),
-        .operand_B(operand_B)
-    );
-    assign adder_b = subtract ? operand_B : B;
-    assign Sum = A + adder_b;
+
+    assign adder_b = B ^ {N{subtract}};  //#^0000..= # itself; #^1=~B 
+    assign Sum     = A + adder_b + {{N-1{1'b0}}, subtract};   
+    // the subtract bit acts as our +1 for our two's complement operation
     assign overflow = (A[N-1] == adder_b[N-1]) && (Sum[N-1] != A[N-1]);
+    
 endmodule
