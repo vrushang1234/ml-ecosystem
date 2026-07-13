@@ -38,6 +38,8 @@ module decode (
          
         case (opcode)
         //engine routing
+        
+        //ALU engine
             4'b0000: engine = 2'b10; //add
             4'b0001: engine = 2'b10; //sub
             4'b0010: engine = 2'b10; //MatMul
@@ -45,7 +47,19 @@ module decode (
             4'b0100: engine = 2'b10; //subT
             4'b0101: engine = 2'b10; //loadT
             default: engine = 2'b00; //default
+            
+            
+           
+          
+                
+                
         endcase
+         //checks if load engine (01) or store engine (11) is selected
+        if (engine ==? 2'b?1) begin
+              if (op1 == op2) begin
+                  engine = 2'b00;
+              end
+          end
     end
    
 
