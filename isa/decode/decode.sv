@@ -46,20 +46,29 @@ module decode (
             4'b0011: engine = 2'b10; //addT
             4'b0100: engine = 2'b10; //subT
             4'b0101: engine = 2'b10; //loadT
+            4'b0110: engine = 2'b11; //storeT
             default: engine = 2'b00; //default
-            
-            
-           
-          
-                
-                
+ 
         endcase
          //checks if load engine (01) or store engine (11) is selected
-        if (engine ==? 2'b?1) begin
-              if (op1 == op2) begin
+         // if load is selected, check if operand 1
+         
+         
+         //buffer selection:
+         //00: input buffer 1, 01: input buffer 2, 10: weight buffer 1, 11: weight buffer 2
+         
+         
+         //store engine check
+        if (engine == 2'b11) begin
+            if (op1 ==? 2'b1?) begin
+                 engine = 2'b00;
+            end
+        end
+      
+              /*if (op1 == op2) begin
                   engine = 2'b00;
-              end
-          end
+              end*/
+            
     end
    
 
