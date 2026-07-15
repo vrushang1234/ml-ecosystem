@@ -15,6 +15,7 @@ run_tb() {
     local top=$1
     shift
     echo "=== $top ==="
+    mkdir -p "obj_dir/$top"
     verilator --binary --timing -Wall -Wno-fatal $INC verilator.vlt \
         --top-module "$top" --Mdir "obj_dir/$top" -o "$top" "$@"
     "obj_dir/$top/$top"
