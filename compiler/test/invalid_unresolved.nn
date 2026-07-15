@@ -1,10 +1,10 @@
-network SimpleMLP{
+network Unresolved{
 
-    input a[5]
-    
+    input a[]
+
     layer l1{
         weights: w1[][]
-        bias: b1[10]
+        bias: b1[]
         activation: relu
     }
 }
