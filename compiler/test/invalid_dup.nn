@@ -1,0 +1,16 @@
+network Dup{
+
+    input a[4]
+
+    layer l1{
+        weights: w1[8][4]
+        bias: b1[8]
+        activation: relu
+    }
+
+    layer l1{
+        weights: w2[3][8]
+        bias: b2[3]
+        activation: sigmoid
+    }
+}
