@@ -1,0 +1,10 @@
+network Rank{
+
+    input a[5]
+
+    layer l1{
+        weights: w1[3]
+        bias: b1[3]
+        activation: relu
+    }
+}

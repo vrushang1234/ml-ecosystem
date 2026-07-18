@@ -1,0 +1,16 @@
+network Chain{
+
+    input x[4]
+
+    layer l1{
+        weights: w1[][]
+        bias: b1[]
+        activation: relu
+    }
+
+    layer l2{
+        weights: w2[3][8]
+        bias: b2[]
+        activation: softmax
+    }
+}
