@@ -1,4 +1,0 @@
-network Empty{
-
-    input a[4]
-}
