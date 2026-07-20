@@ -15,7 +15,9 @@
 #include <vector>
 
 const std::unordered_map<std::string, ActivationKind> activationMap{
-    {"relu", ActivationKind::RELU}, {"softmax", ActivationKind::SOFTMAX}};
+    {"relu", ActivationKind::RELU},
+    {"softmax", ActivationKind::SOFTMAX},
+    {"linear", ActivationKind::LINEAR}};
 
 struct Source
 {
@@ -30,6 +32,8 @@ static std::string activationToString(ActivationKind kind)
             return "relu";
         case ActivationKind::SOFTMAX:
             return "softmax";
+        case ActivationKind::LINEAR:
+            return "linear";
     }
     return "";
 }

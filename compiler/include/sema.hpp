@@ -12,7 +12,8 @@
 enum class ActivationKind
 {
     RELU,
-    SOFTMAX
+    SOFTMAX,
+    LINEAR
 };
 
 struct ResolvedLayer

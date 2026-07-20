@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Integration test runner for the compiler CLI.
-# Usage: run_case.sh <compiler-bin> <fixture.nn> <expected-exit> [expected-stderr-regex]
+# Usage: run_case.sh <compiler-bin> <fixture.onnx> <expected-exit> [expected-stderr-regex]
 set -u
 
 bin=$1

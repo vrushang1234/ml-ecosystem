@@ -1,31 +1,25 @@
 #include "ast.hpp"
-#include "helper.hpp"
-#include "lexer.hpp"
 #include "parser.hpp"
 #include "sema.hpp"
 
+#include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <string>
 #include <vector>
 int main(int argc, char* argv[])
 {
-    std::string path{argc > 1 ? argv[1] : "../test/invalid_dup.nn"};
-    std::ifstream file(path);
+    std::string path{argc > 1 ? argv[1] : "../test/test.onnx"};
+    std::ifstream file(path, std::ios::binary);
     if (!file) {
         std::cerr << "Error: could not open file '" << path << "'" << std::endl;
         return 1;
     }
-    std::string s;
-    std::string code_string;
-    while (std::getline(file, s)) {
-        code_string += s;
-        code_string += '\n';
-    }
+    std::vector<std::uint8_t> bytes{std::istreambuf_iterator<char>(file),
+                                    std::istreambuf_iterator<char>()};
     try {
-        std::vector<Token> tokenList{tokenize(code_string)};
-        printTokens(tokenList);
-        Program program{parse(tokenList)};
+        Program program{parse(bytes)};
         printAST(program);
         SemaResult result{analyze(program)};
         if (!result.errors.empty()) {
@@ -40,10 +34,6 @@ int main(int argc, char* argv[])
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
-    if (file.eof())
-        std::cout << "Reached end of file." << std::endl;
-    else
-        std::cerr << "Error: File reading failed!" << std::endl;
     file.close();
     return 0;
 }
