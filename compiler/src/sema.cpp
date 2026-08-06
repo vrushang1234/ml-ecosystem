@@ -198,11 +198,26 @@ static void analyzeNetwork(const NetworkDecl& network, size_t errorsBefore, Sema
 SemaResult analyze(const Program& program)
 {
     SemaResult result;
+    result.constants = program.constants;
+
+    std::unordered_set<std::string> pooled;
+    for (const Constant& constant : program.constants) {
+        pooled.insert(constant.name);
+    }
+
     std::unordered_set<std::string> networkNames;
     for (const NetworkDecl& network : program.networks) {
         size_t errorsBefore = result.errors.size();
         if (!networkNames.insert(network.name).second) {
             result.errors.push_back("duplicate network name '" + network.name + "'");
+        }
+        for (const LayerDecl& layer : network.layers) {
+            for (const std::string& name : {layer.weights.name, layer.bias.name}) {
+                if (pooled.find(name) == pooled.end()) {
+                    result.errors.push_back("missing constant data for '" + name + "' in layer '" +
+                                            layer.name + "' of network '" + network.name + "'");
+                }
+            }
         }
         analyzeNetwork(network, errorsBefore, result);
     }

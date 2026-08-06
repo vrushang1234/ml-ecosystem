@@ -6,7 +6,9 @@
 
 #include "parser.hpp"
 
+#include <cmath>
 #include <cstdint>
+#include <cstring>
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -77,6 +79,23 @@ namespace
             return std::string(reinterpret_cast<const char*>(sub.p), sub.end - sub.p);
         }
 
+        std::vector<std::uint8_t> readRawBytes()
+        {
+            Reader sub = readLengthDelimited();
+            return std::vector<std::uint8_t>(sub.p, sub.end);
+        }
+
+        float readFloat()
+        {
+            if (end - p < 4) {
+                throw std::runtime_error("Parse error: truncated float in ONNX file");
+            }
+            float value = 0.0f;
+            std::memcpy(&value, p, 4);
+            p += 4;
+            return value;
+        }
+
         void skip(std::uint32_t wireType)
         {
             switch (wireType) {
@@ -111,10 +130,14 @@ namespace
         }
     };
 
+    constexpr long ONNX_FLOAT = 1;
+
     struct Tensor
     {
         std::string name;
         std::vector<long> dims;
+        long dataType = 0;
+        std::vector<float> data;
     };
 
     struct ValueInfo
@@ -224,8 +247,33 @@ namespace
                         static_cast<long>(static_cast<std::int64_t>(packed.readVarint())));
                 }
             }
+            else if (field == 2 && wireType == 0) {
+                tensor.dataType = static_cast<long>(static_cast<std::int64_t>(reader.readVarint()));
+            }
+            else if (field == 4 && wireType == 2) {
+                Reader packed = reader.readLengthDelimited();
+                while (!packed.done()) {
+                    tensor.data.push_back(packed.readFloat());
+                }
+            }
+            else if (field == 4 && wireType == 5) {
+                tensor.data.push_back(reader.readFloat());
+            }
             else if (field == 8 && wireType == 2) {
                 tensor.name = reader.readString();
+            }
+            else if (field == 9 && wireType == 2) {
+                /* raw_data: little-endian float32, which is what every real
+                 * exporter emits. */
+                std::vector<std::uint8_t> raw = reader.readRawBytes();
+                if (raw.size() % 4 != 0) {
+                    throw std::runtime_error("Parse error: raw_data of tensor '" + tensor.name +
+                                             "' is not a whole number of float32 values");
+                }
+                tensor.data.resize(raw.size() / 4);
+                for (size_t i = 0; i < tensor.data.size(); i++) {
+                    std::memcpy(&tensor.data[i], raw.data() + i * 4, 4);
+                }
             }
             else {
                 reader.skip(wireType);
@@ -355,7 +403,68 @@ namespace
         return decl;
     }
 
-    NetworkDecl lowerGraph(const Graph& graph)
+    /* Converts an initializer's float32 values into the machine's fixed-point
+     * format. When transpose is set the [in, out] layout that Gemm uses with
+     * transB=0 is rewritten into the [out, in] layout the AST expects, so the
+     * element order matches the swapped dimensions. */
+    Constant quantizeTensor(const Tensor& tensor, bool transpose, const MachineModel& machine)
+    {
+        if (tensor.dataType != ONNX_FLOAT) {
+            throw std::runtime_error("Parse error: tensor '" + tensor.name +
+                                     "' must be float32 (data_type " +
+                                     std::to_string(tensor.dataType) + " is unsupported)");
+        }
+
+        long expected = 1;
+        for (long dim : tensor.dims) {
+            expected *= dim;
+        }
+        if (static_cast<long>(tensor.data.size()) != expected) {
+            throw std::runtime_error("Parse error: tensor '" + tensor.name + "' declares " +
+                                     std::to_string(expected) + " elements but carries " +
+                                     std::to_string(tensor.data.size()));
+        }
+
+        Constant constant;
+        constant.name = tensor.name;
+        constant.dims = tensor.dims;
+
+        std::vector<float> values = tensor.data;
+        if (transpose) {
+            if (tensor.dims.size() != 2) {
+                throw std::runtime_error("Parse error: cannot transpose tensor '" + tensor.name +
+                                         "' of rank " + std::to_string(tensor.dims.size()));
+            }
+            long rows = tensor.dims[0];
+            long cols = tensor.dims[1];
+            values.assign(tensor.data.size(), 0.0f);
+            for (long i = 0; i < rows; i++) {
+                for (long j = 0; j < cols; j++) {
+                    values[j * rows + i] = tensor.data[i * cols + j];
+                }
+            }
+            constant.dims = {cols, rows};
+        }
+
+        /* A weight that does not fit the chosen format means the format is
+         * wrong; saturating quietly would produce a model that runs and gives
+         * wrong answers. */
+        const double scale = static_cast<double>(1L << machine.fracBits);
+        const long limit = 1L << (machine.storageBits - 1);
+        constant.data.reserve(values.size());
+        for (float value : values) {
+            double scaled = std::round(static_cast<double>(value) * scale);
+            if (scaled < static_cast<double>(-limit) || scaled > static_cast<double>(limit - 1)) {
+                throw std::runtime_error(
+                    "Parse error: value " + std::to_string(value) + " in tensor '" + tensor.name +
+                    "' does not fit fixed-point format " + machine.formatName());
+            }
+            constant.data.push_back(static_cast<std::int32_t>(scaled));
+        }
+        return constant;
+    }
+
+    NetworkDecl lowerGraph(const Graph& graph, const MachineModel& machine, Program& program)
     {
         NetworkDecl network;
         network.name = graph.name.empty() ? "model" : graph.name;
@@ -386,6 +495,13 @@ namespace
             network.input.dims = input->dims;
         }
 
+        std::unordered_set<std::string> pooled;
+        auto addConstant = [&](const Tensor& tensor, bool transpose) {
+            if (pooled.insert(tensor.name).second) {
+                program.constants.push_back(quantizeTensor(tensor, transpose, machine));
+            }
+        };
+
         size_t i = 0;
         while (i < graph.nodes.size()) {
             const Node& node = graph.nodes[i];
@@ -412,9 +528,12 @@ namespace
                                          layer.name + "' must be an initializer");
             }
             layer.weights = toTensorDecl(*weights_it->second);
-            if (getIntAttribute(node, "transB", 0) == 0 && layer.weights.dims.size() == 2) {
+            bool transposed =
+                getIntAttribute(node, "transB", 0) == 0 && layer.weights.dims.size() == 2;
+            if (transposed) {
                 std::swap(layer.weights.dims[0], layer.weights.dims[1]);
             }
+            addConstant(*weights_it->second, transposed);
 
             auto bias_it = initializers.find(node.inputs[2]);
             if (bias_it == initializers.end()) {
@@ -422,6 +541,7 @@ namespace
                                          layer.name + "' must be an initializer");
             }
             layer.bias = toTensorDecl(*bias_it->second);
+            addConstant(*bias_it->second, false);
 
             i++;
             if (i < graph.nodes.size() &&
@@ -440,11 +560,11 @@ namespace
 
 } // namespace
 
-Program parse(const std::vector<std::uint8_t>& bytes)
+Program parse(const std::vector<std::uint8_t>& bytes, const MachineModel& machine)
 {
     Reader reader(bytes.data(), bytes.data() + bytes.size());
     Graph graph = decodeModel(reader);
     Program program;
-    program.networks.push_back(lowerGraph(graph));
+    program.networks.push_back(lowerGraph(graph, machine, program));
     return program;
 }

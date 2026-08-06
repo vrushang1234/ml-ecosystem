@@ -38,6 +38,7 @@ struct SemaResult
 {
     std::vector<std::string> errors;
     std::vector<ResolvedNetwork> networks;
+    std::vector<Constant> constants;
 };
 
 SemaResult analyze(const Program& program);

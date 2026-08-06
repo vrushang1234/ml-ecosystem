@@ -5,8 +5,9 @@
 
 #pragma once
 #include "ast.hpp"
+#include "machine.hpp"
 
 #include <cstdint>
 #include <vector>
 
-Program parse(const std::vector<std::uint8_t>& bytes);
+Program parse(const std::vector<std::uint8_t>& bytes, const MachineModel& machine);

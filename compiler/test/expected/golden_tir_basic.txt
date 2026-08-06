@@ -1,0 +1,16 @@
+.format q16.16
+
+func @SimpleMLP {
+  %0 = input @a : tensor<5>
+  %1 = const @w1 : tensor<10x5>
+  %2 = const @b1 : tensor<10>
+  %3 = matmul %1, %0 : tensor<10>
+  %4 = add %3, %2 : tensor<10>
+  %5 = relu %4 : tensor<10>
+  %6 = const @w2 : tensor<3x10>
+  %7 = const @b2 : tensor<3>
+  %8 = matmul %6, %5 : tensor<3>
+  %9 = add %8, %7 : tensor<3>
+  %10 = softmax %9 : tensor<3>
+  output %10 : tensor<3>
+}

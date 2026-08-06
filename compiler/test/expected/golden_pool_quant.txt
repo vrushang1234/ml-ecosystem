@@ -1,0 +1,8 @@
+const w1[2][2] = 32768 -16384 65536 -131072
+const b1[2] = 8192 -8192
+network Quant
+  input a[2]
+  layer l1
+    weights: w1[2][2]
+    bias: b1[2]
+    activation: linear

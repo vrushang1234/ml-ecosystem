@@ -4,6 +4,7 @@
  * Ecosystem */
 
 #pragma once
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <vector>
@@ -34,9 +35,19 @@ struct NetworkDecl
     std::vector<LayerDecl> layers;
 };
 
+/* A weight or bias tensor with its values quantized to the machine's
+ * fixed-point format. Elements are in row-major order. */
+struct Constant
+{
+    std::string name;
+    std::vector<long> dims;
+    std::vector<std::int32_t> data;
+};
+
 struct Program
 {
     std::vector<NetworkDecl> networks;
+    std::vector<Constant> constants;
 };
 
 void printAST(const Program& program);

@@ -60,12 +60,18 @@ def value_info(name: str, dims) -> bytes:
     return string(1, name) + ld(2, ld(1, tensor_type))
 
 
-def initializer(name: str, dims) -> bytes:
+def initializer(name: str, dims, values=None) -> bytes:
+    """Values default to a deterministic pattern of exact binary fractions,
+    so quantization to Q16.16 is lossless and hand-checkable."""
     count = 1
     for d in dims:
         count *= d
+    if values is None:
+        values = [((i % 15) - 7) / 8.0 for i in range(count)]
+    if len(values) != count:
+        raise ValueError(f"{name}: {len(values)} values for {count} elements")
     packed_dims = ld(1, b"".join(varint(d) for d in dims))
-    raw_data = ld(9, struct.pack(f"<{count}f", *([0.0] * count)))
+    raw_data = ld(9, struct.pack(f"<{count}f", *values))
     return packed_dims + vint(2, FLOAT) + string(8, name) + raw_data
 
 
@@ -212,6 +218,37 @@ write(
 write(
     "invalid_nolayers.onnx",
     graph("Empty", [], [], [value_info("a", ["N", 5])], [value_info("a", ["N", 5])]),
+)
+
+# Weight of 40000.0 exceeds the Q16.16 range -> parse "does not fit".
+write(
+    "invalid_range.onnx",
+    graph(
+        "OutOfRange",
+        [
+            gemm("a", "w1", "b1", "h1", "l1"),
+            node("Relu", ["h1"], ["y"]),
+        ],
+        [initializer("w1", [2, 2], [40000.0, 0.0, 0.0, 0.0]),
+         initializer("b1", [2], [0.0, 0.0])],
+        [value_info("a", ["N", 2])],
+        [value_info("y", ["N", 2])],
+    ),
+)
+
+# Small net with hand-picked values, used for the quantization round-trip test.
+write(
+    "quant.onnx",
+    graph(
+        "Quant",
+        [
+            gemm("a", "w1", "b1", "y", "l1"),
+        ],
+        [initializer("w1", [2, 2], [0.5, -0.25, 1.0, -2.0]),
+         initializer("b1", [2], [0.125, -0.125])],
+        [value_info("a", ["N", 2])],
+        [value_info("y", ["N", 2])],
+    ),
 )
 
 # Conv is not in the supported subset -> parse "unsupported op".

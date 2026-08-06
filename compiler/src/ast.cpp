@@ -5,6 +5,7 @@
 
 #include "ast.hpp"
 
+#include <cstdint>
 #include <iostream>
 #include <string>
 
@@ -23,6 +24,17 @@ static std::string dimsToString(const TensorDecl& tensor)
 
 void printAST(const Program& program)
 {
+    for (const Constant& constant : program.constants) {
+        std::cout << "const " << constant.name;
+        for (long dim : constant.dims) {
+            std::cout << '[' << dim << ']';
+        }
+        std::cout << " =";
+        for (std::int32_t value : constant.data) {
+            std::cout << ' ' << value;
+        }
+        std::cout << '\n';
+    }
     for (const NetworkDecl& network : program.networks) {
         std::cout << "network " << network.name << '\n';
         std::cout << "  input " << network.input.name << dimsToString(network.input) << '\n';

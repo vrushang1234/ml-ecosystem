@@ -1,0 +1,56 @@
+.format q16.16
+.tile 4x4
+.buffers input=2 weight=2 accum=2 elems=4
+.accum q32.32 (64b), add<<16, storeT>>16
+.scratch %scratch0 10
+.scratch %scratch1 10
+
+func @SimpleMLP {
+  zero ACC0
+  loadT IB0, @a[0 1x4 stride 5]
+  loadT WB0, @w1[0 4x4 stride 5]
+  matmul ACC0, WB0, IB0
+  loadT IB1, @a[4 1x1 stride 5]
+  loadT WB1, @w1[4 4x1 stride 5]
+  matmul ACC0, WB1, IB1
+  loadT IB0, @b1[0 1x4 stride 10]
+  add ACC0, ACC0, IB0
+  relu ACC0
+  storeT %scratch0[0 1x4 stride 10], ACC0
+  zero ACC1
+  loadT IB0, @a[0 1x4 stride 5]
+  loadT WB0, @w1[20 4x4 stride 5]
+  matmul ACC1, WB0, IB0
+  loadT IB1, @a[4 1x1 stride 5]
+  loadT WB1, @w1[24 4x1 stride 5]
+  matmul ACC1, WB1, IB1
+  loadT IB0, @b1[4 1x4 stride 10]
+  add ACC1, ACC1, IB0
+  relu ACC1
+  storeT %scratch0[4 1x4 stride 10], ACC1
+  zero ACC0
+  loadT IB0, @a[0 1x4 stride 5]
+  loadT WB0, @w1[40 2x4 stride 5]
+  matmul ACC0, WB0, IB0
+  loadT IB1, @a[4 1x1 stride 5]
+  loadT WB1, @w1[44 2x1 stride 5]
+  matmul ACC0, WB1, IB1
+  loadT IB0, @b1[8 1x2 stride 10]
+  add ACC0, ACC0, IB0
+  relu ACC0
+  storeT %scratch0[8 1x2 stride 10], ACC0
+  zero ACC0
+  loadT IB0, %scratch0[0 1x4 stride 10]
+  loadT WB0, @w2[0 3x4 stride 10]
+  matmul ACC0, WB0, IB0
+  loadT IB1, %scratch0[4 1x4 stride 10]
+  loadT WB1, @w2[4 3x4 stride 10]
+  matmul ACC0, WB1, IB1
+  loadT IB0, %scratch0[8 1x2 stride 10]
+  loadT WB0, @w2[8 3x2 stride 10]
+  matmul ACC0, WB0, IB0
+  loadT IB0, @b2[0 1x3 stride 3]
+  add ACC0, ACC0, IB0
+  storeT %scratch1[0 1x3 stride 3], ACC0
+  softmax %scratch1[0 1x3 stride 3]
+}

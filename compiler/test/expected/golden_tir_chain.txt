@@ -1,0 +1,20 @@
+.format q16.16
+
+func @Chain {
+  %0 = input @x : tensor<8>
+  %1 = const @w1 : tensor<16x8>
+  %2 = const @b1 : tensor<16>
+  %3 = matmul %1, %0 : tensor<16>
+  %4 = add %3, %2 : tensor<16>
+  %5 = relu %4 : tensor<16>
+  %6 = const @w2 : tensor<4x16>
+  %7 = const @b2 : tensor<4>
+  %8 = matmul %6, %5 : tensor<4>
+  %9 = add %8, %7 : tensor<4>
+  %10 = relu %9 : tensor<4>
+  %11 = const @w3 : tensor<2x4>
+  %12 = const @b3 : tensor<2>
+  %13 = matmul %11, %10 : tensor<2>
+  %14 = add %13, %12 : tensor<2>
+  output %14 : tensor<2>
+}
