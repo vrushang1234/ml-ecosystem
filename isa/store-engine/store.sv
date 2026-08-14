@@ -63,7 +63,7 @@ module store(
     logic [15:0] addr_q;
     logic [31:0] data_q;
     logic [1:0] src_buffer_q;
-    logic [1:0] src_buffer_q;
+    
     
     
     // read channel permanently inactive - store engine never reads
