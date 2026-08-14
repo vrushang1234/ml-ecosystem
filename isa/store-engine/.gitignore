@@ -2,3 +2,6 @@
 *_vlog.prj
 *_xvlog.prj
 *.jou
+
+# Duplicated RTL copy created by IP packaging — source of truth is isa/store-engine/store.sv
+ip/src/store.sv
