@@ -83,13 +83,7 @@ module decode (
          //00: input buffer 1, 01: input buffer 2, 10: weight buffer 1, 11: weight buffer 2
          
          
-         //store engine check
-        
-      
-              /*if (op1 == op2) begin
-                  engine = 2'b00;
-              end*/
-            
+         
     end
    
 
