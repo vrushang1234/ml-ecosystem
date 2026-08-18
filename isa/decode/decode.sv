@@ -39,26 +39,26 @@ module decode (
     output logic [1:0] acc
     );
  
-    always_comb begin
+    always_latch begin
         opcode = instruction[31:28];
         
         //store 
         if (opcode == 4'b0110) begin
-            scratch <= instruction[13:12];
-            offset <= instruction[11:10];
-            row <= instruction[9:8];
-            col <= instruction[7:6];
-            stride <= instruction[5:2];
-            acc <= instruction[1:0];
+            scratch = instruction[13:12];
+            offset = instruction[11:10];
+            row = instruction[9:8];
+            col = instruction[7:6];
+            stride = instruction[5:2];
+            acc = instruction[1:0];
         end else begin
-            scratch <= 0;
-            offset <= 0;
-            row <= 0;
-            col <= 0;
-            stride <= 0;
-            acc <= 0;
-            op1 <= instruction[3:2];
-            op2 <= instruction[1:0];
+            scratch = 0;
+            offset = 0;
+            row = 0;
+            col = 0;
+            stride = 0;
+            acc = 0;
+            op1 = instruction[3:2];
+            op2 = instruction[1:0];
             
         end
         case (opcode)
