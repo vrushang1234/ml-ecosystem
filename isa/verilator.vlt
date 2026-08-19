@@ -1,6 +1,5 @@
 `verilator_config
 // Known RTL issues, waived so lint stays strict for everything else:
-// - decode.sv declares output `out` but never drives it
-// - decode.sv ignores instruction[11:8]
-lint_off -rule UNDRIVEN -file "*/decode.sv" -match "*'out'*"
+// - decode.sv leaves instruction[27:14] unused (opcode is [31:28], store
+//   fields/op1/op2 only ever read [13:0])
 lint_off -rule UNUSEDSIGNAL -file "*/decode.sv" -match "*instruction*"

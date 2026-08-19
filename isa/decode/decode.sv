@@ -22,20 +22,45 @@
 
 module decode (
     
-    input logic [11:0] instruction,
+    input logic [31:0] instruction,
     output logic [3:0] opcode,
     output logic [1:0] engine,
+    
+    //for non store operations
     output logic [1:0] op1,
     output logic [1:0] op2,
-    output logic out
+    
+    //for store operation -> opcode == 4'b0110
+    output logic [1:0] scratch,
+    output logic [1:0] offset, 
+    output logic [1:0] row,
+    output logic [1:0] col,
+    output logic [3:0] stride, 
+    output logic [1:0] acc
     );
  
-    always_comb begin
-        opcode = instruction[7:4];
-        //buffer assignment
-        op1 = instruction[3:2];
-        op2 = instruction[1:0];
-         
+    always_latch begin
+        opcode = instruction[31:28];
+        
+        //store 
+        if (opcode == 4'b0110) begin
+            scratch = instruction[13:12];
+            offset = instruction[11:10];
+            row = instruction[9:8];
+            col = instruction[7:6];
+            stride = instruction[5:2];
+            acc = instruction[1:0];
+        end else begin
+            scratch = 0;
+            offset = 0;
+            row = 0;
+            col = 0;
+            stride = 0;
+            acc = 0;
+            op1 = instruction[3:2];
+            op2 = instruction[1:0];
+            
+        end
         case (opcode)
         //engine routing
         
@@ -58,17 +83,7 @@ module decode (
          //00: input buffer 1, 01: input buffer 2, 10: weight buffer 1, 11: weight buffer 2
          
          
-         //store engine check
-        if (engine == 2'b11) begin
-            if (op1 ==? 2'b1?) begin
-                 engine = 2'b00;
-            end
-        end
-      
-              /*if (op1 == op2) begin
-                  engine = 2'b00;
-              end*/
-            
+         
     end
    
 
