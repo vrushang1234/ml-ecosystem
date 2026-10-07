@@ -1,0 +1,26 @@
+[
+{
+  "directory": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -IC:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -o CMakeFiles\\compiler.dir\\src\\ast.cpp.obj -c C:\\Users\\ptat2\\Projects\\ML-Ecosystem\\ml-ecosystem\\compiler\\src\\ast.cpp",
+  "file": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/src/ast.cpp",
+  "output": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/build/CMakeFiles/compiler.dir/src/ast.cpp.obj"
+},
+{
+  "directory": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -IC:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -o CMakeFiles\\compiler.dir\\src\\main.cpp.obj -c C:\\Users\\ptat2\\Projects\\ML-Ecosystem\\ml-ecosystem\\compiler\\src\\main.cpp",
+  "file": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/src/main.cpp",
+  "output": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/build/CMakeFiles/compiler.dir/src/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -IC:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -o CMakeFiles\\compiler.dir\\src\\parser.cpp.obj -c C:\\Users\\ptat2\\Projects\\ML-Ecosystem\\ml-ecosystem\\compiler\\src\\parser.cpp",
+  "file": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/src/parser.cpp",
+  "output": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/build/CMakeFiles/compiler.dir/src/parser.cpp.obj"
+},
+{
+  "directory": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -IC:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/include -O3 -DNDEBUG -std=c++17 -Wall -Wextra -o CMakeFiles\\compiler.dir\\src\\sema.cpp.obj -c C:\\Users\\ptat2\\Projects\\ML-Ecosystem\\ml-ecosystem\\compiler\\src\\sema.cpp",
+  "file": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/src/sema.cpp",
+  "output": "C:/Users/ptat2/Projects/ML-Ecosystem/ml-ecosystem/compiler/build/CMakeFiles/compiler.dir/src/sema.cpp.obj"
+}
+]
