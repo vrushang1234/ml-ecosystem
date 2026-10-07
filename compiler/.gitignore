@@ -15,3 +15,4 @@ compiler
 # Editor / OS
 *.swp
 .DS_Store
+.vscode/
