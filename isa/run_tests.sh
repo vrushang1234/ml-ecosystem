@@ -10,7 +10,7 @@ echo "=== Lint ==="
 verilator --lint-only -Wall $INC verilator.vlt adder/alu_variable_adder.sv
 verilator --lint-only -Wall $INC verilator.vlt adder/negation_module.sv
 verilator --lint-only -Wall $INC verilator.vlt decode/decode.sv
-verilator --lint-only -Wall $INC verilator.vlt store-engine/store.tcl
+
 
 run_tb() {
     local top=$1
