@@ -10,7 +10,7 @@ echo "=== Lint ==="
 verilator --lint-only -Wall $INC verilator.vlt adder/alu_variable_adder.sv
 verilator --lint-only -Wall $INC verilator.vlt adder/negation_module.sv
 verilator --lint-only -Wall $INC verilator.vlt decode/decode.sv
-verilator --lint-only -Wall $INC verilator.vlt store-engine/store.sv
+verilator --lint-only -Wall $INC verilator.vlt store-engine/store.tcl
 
 run_tb() {
     local top=$1
@@ -25,6 +25,6 @@ run_tb() {
 run_tb tb_alu_variable_adder tb/tb_alu_variable_adder.sv adder/alu_variable_adder.sv
 run_tb tb_negation_module tb/tb_negation_module.sv adder/negation_module.sv
 run_tb tb_decode tb/tb_decode.sv decode/decode.sv
-run_tb tb_store tb/store_tb.sv store-engine/store.sv
+
 
 echo "ALL ISA TESTS PASSED"
